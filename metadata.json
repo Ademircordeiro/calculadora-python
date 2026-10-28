@@ -1,0 +1,6 @@
+{
+  "name": "Calculadora em Python CLI",
+  "description": "Calculadora CLI em Python para operações matemáticas básicas com testes automatizados e interface interativa.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
