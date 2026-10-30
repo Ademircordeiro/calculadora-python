@@ -1,6 +1,6 @@
 {
-  "name": "Calculadora em Python CLI",
-  "description": "Calculadora CLI em Python para operações matemáticas básicas com testes automatizados e interface interativa.",
+  "name": "Calculadora Científica em Python & Web",
+  "description": "Calculadora Científica interativa em Python e interface web moderna em React, com 38 testes automatizados, suporte a DEG/RAD, trigonometria, logaritmos, potências, raízes e memória.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
