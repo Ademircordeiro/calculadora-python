@@ -57,8 +57,26 @@ async function startServer() {
   // Endpoint to execute python operation
   app.post('/api/calculate', async (req, res) => {
     try {
-      const { op, a, b } = req.body;
-      const cmd = `python3 -c "import operations, sys; fn = getattr(operations, '${op}'); print(fn(${a}, ${b}))"`;
+      const { op, a, b, deg } = req.body;
+
+      // Sanitização básica do nome da operação
+      if (!op || typeof op !== 'string' || !/^[a-zA-Z0-9_]+$/.test(op)) {
+        return res.status(400).json({ success: false, error: 'Operação inválida.' });
+      }
+
+      let invocation = '';
+      const trigOps = ['seno', 'cosseno', 'tangente', 'arco_seno', 'arco_cosseno', 'arco_tangente'];
+
+      if (trigOps.includes(op)) {
+        const emGraus = deg ? 'True' : 'False';
+        invocation = `print(fn(${Number(a)}, em_graus=${emGraus}))`;
+      } else if (b !== undefined && b !== null) {
+        invocation = `print(fn(${Number(a)}, ${Number(b)}))`;
+      } else {
+        invocation = `print(fn(${Number(a)}))`;
+      }
+
+      const cmd = `python3 -c "import operations; fn = getattr(operations, '${op}'); ${invocation}"`;
       const { stdout } = await execAsync(cmd, { cwd: __dirname, timeout: 3000 });
       res.json({ success: true, result: parseFloat(stdout.trim()) });
     } catch (err: any) {
