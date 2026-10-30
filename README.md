@@ -1,158 +1,170 @@
-# Calculadora em Python CLI
+# Calculadora Científica em Python & Interface Web Avançada
 
-Calculadora interativa via linha de comando (CLI) desenvolvida em Python para realizar as quatro operações matemáticas básicas (Adição, Subtração, Multiplicação e Divisão). O projeto foi construído seguindo as convenções **PEP 8**, boas práticas de desenvolvimento modular, validações defensivas contra falhas de entrada e cobertura integral de testes unitários com o framework nativo `unittest`.
+Calculadora Científica completa desenvolvida em **Python 3.10+** e acompanhada de uma **Interface Web Moderna (React + Tailwind CSS + Lucide)**, proporcionando alta fidelidade matemática, excelente experiência de usuário (UX/UI) e cobertura rigorosa de testes unitários com o framework nativo `unittest`.
 
----
-
-## 1. Objetivo
-
-Fornecer uma ferramenta de cálculo ágil, robusta e modular em linha de comando, capaz de lidar com números inteiros, decimais e negativos, prevenindo erros como divisão por zero e entradas não numéricas sem interromper a execução do programa.
+O projeto foi construído seguindo as convenções **PEP 8**, boas práticas de desenvolvimento modular, validações defensivas contra falhas de domínio numérico e zero dependências externas no núcleo de cálculo em Python (apenas a biblioteca padrão `math`).
 
 ---
 
-## 2. Estrutura do Projeto
+## 1. Destaques e Funcionalidades
+
+### 1.1. Operações Aritméticas e Especiais
+- **Quatro Operações Básicas**: Adição (`+`), Subtração (`-`), Multiplicação (`*`) e Divisão (`/`).
+- **Resto da Divisão (Módulo)**: Operador `%` para divisões inteiras e reais.
+- **Valor Absoluto (Módulo)**: `|x|` para magnitudes reais.
+- **Inverso Multiplicativo**: `1/x` com proteção contra divisão por zero.
+- **Porcentagem**: `%` com suporte a cálculo relativo e fracionário.
+- **Fatorial**: `n!` para inteiros não-negativos com validação de limite contra estouro de memória.
+
+### 1.2. Potenciação e Radiciação
+- **Potenciação Arbitrária**: $x^y$ com suporte a bases e expoentes reais (positivos, nulos e negativos).
+- **Potências Rápidas**: $x^2$ (quadrado), $x^3$ (cubo).
+- **Bases Especiais**: $10^x$ e $e^x$ ($\exp$).
+- **Radiciação**:
+  - $\sqrt{x}$ (raiz quadrada) com bloqueio preventivo para $x < 0$ no domínio dos reais.
+  - $\sqrt[3]{x}$ (raiz cúbica) com suporte total a números negativos (ex: $\sqrt[3]{-8} = -2$).
+  - $\sqrt[y]{x}$ (raiz $n$-ésima) com validação de índice e paridade.
+
+### 1.3. Logaritmos
+- **Logaritmo na Base 10**: $\log_{10}(x)$ com validação de $x > 0$.
+- **Logaritmo Natural**: $\ln(x)$ (base $e$) com validação de $x > 0$.
+- **Logaritmo na Base 2**: $\log_2(x)$.
+
+### 1.4. Trigonometria e Funções Hiperbólicas
+- **Alternância Angular**: Seletor instantâneo entre **Graus (DEG)** e **Radianos (RAD)**.
+- **Funções Diretas**: $\sin(\theta)$, $\cos(\theta)$, $\tan(\theta)$ (com tratamento de assíntotas verticais em $\theta = 90^\circ, 270^\circ$).
+- **Funções Inversas**: $\arcsin(x)$, $\arccos(x)$ (com validação de domínio em $[-1, 1]$), $\arctan(x)$.
+- **Funções Hiperbólicas**: $\sinh(x)$, $\cosh(x)$, $\tanh(x)$.
+
+### 1.5. Constantes Matemáticas Integradas
+- **$\pi$ (Pi)**: $3.141592653589793$
+- **$e$ (Número de Euler)**: $2.718281828459045$
+- **$\phi$ (Proporção Áurea / Golden Ratio)**: $1.618033988749895$
+- **$\tau$ (Tau = $2\pi$)**: $6.283185307179586$
+
+### 1.6. Recursos de UX/UI
+- **Alternância de Modos**: Toggle fluido entre **Modo Científico** e **Modo Padrão**.
+- **Sistema de Memória Científica**: Teclas $MC$ (Memory Clear), $MR$ (Memory Recall), $M+$ (Memory Add), $M-$ (Memory Subtract), com badge visual no display quando um valor estiver salvo.
+- **Teclado Tátil e Físico**: Suporte a atalhos de teclado (`0-9`, `+`, `-`, `*`, `/`, `^`, `%`, `Enter`, `Esc`, `Backspace`).
+- **Encadeamento de Cálculos (ANS)**: Permite reaproveitar o último resultado calculado para a próxima operação sem precisar redigitar.
+- **Cenários de Testes Rápidos com 1 Clique**: Botões de teste imediato para os principais critérios de aceitação e operações científicas.
+- **Histórico Interativo**: Visualização com data/hora e possibilidade de reinserir o resultado diretamente no visor.
+
+---
+
+## 2. Estrutura do Repositório
 
 ```text
 .
-├── operations.py       # Funções matemáticas puras e isoladas
-├── main.py             # Interface de linha de comando (CLI) e loop de interação
-├── test_operations.py  # Testes unitários automatizados com unittest
-└── README.md           # Documentação completa de execução e especificações
+├── operations.py       # Funções matemáticas puras e constantes científicas
+├── main.py             # Interface de linha de comando (CLI) interativa
+├── test_operations.py  # Suíte formal de 38 testes automatizados com unittest
+├── server.ts           # Servidor Express com API Python e middleware Vite
+├── src/
+│   ├── App.tsx         # Interface de usuário moderna da Calculadora Científica
+│   ├── main.tsx        # Ponto de entrada do React
+│   └── index.css       # Estilos globais Tailwind
+├── package.json        # Dependências do frontend e scripts
+└── README.md           # Documentação completa do projeto
 ```
-
-### Descrição dos Arquivos
-
-- **`operations.py`**:
-  - Implementa as funções `adicao(a, b)`, `subtracao(a, b)`, `multiplicacao(a, b)` e `divisao(a, b)`.
-  - Converte e opera sobre tipos `float` para precisão com inteiros e números decimais.
-  - Não faz uso de bibliotecas de terceiros ou da função `eval()`.
-  - Dispara `ZeroDivisionError` quando o divisor for igual a zero.
-- **`main.py`**:
-  - Apresenta o menu textual interativo com opções de `1` a `4` para operações e `0` para encerramento.
-  - Realiza validação contínua de entradas numéricas, aceitando tanto `.` quanto `,` como separador decimal.
-  - Trata exceções amigavelmente (`ValueError`, `ZeroDivisionError`, `KeyboardInterrupt`, `EOFError`).
-  - Permite encadeamento consecutivo de cálculos até que o usuário opte por sair.
-- **`test_operations.py`**:
-  - Contém a suíte `TestOperacoesMatematicas` com 17 testes automatizados cobrindo números positivos, negativos, nulos, decimais, ordens de precedência e captura da exceção de divisão por zero.
 
 ---
 
-## 3. Requisitos e Compatibilidade
+## 3. Instruções de Execução
 
-- **Linguagem**: Python 3.10 ou superior (testado em Python 3.10+).
-- **Dependências externas**: Nenhuma. Utiliza apenas bibliotecas padrão (`sys`, `unittest`).
-- **Sistemas Operacionais**: Compatível com Linux, macOS e Microsoft Windows.
+### 3.1. Executar a Calculadora Científica CLI (Python)
 
----
-
-## 4. Instruções de Execução
-
-### 4.1. Executar a Calculadora CLI
-
-No terminal, navegue até a raiz do diretório e execute:
+Na raiz do projeto, execute:
 
 ```bash
-python main.py
+python3 main.py
 ```
-*(ou `python3 main.py` em sistemas Linux/macOS)*
 
-#### Exemplo de Interação:
+*(ou `python main.py` no Windows)*
+
+#### Exemplo de Interação na CLI:
 
 ```text
-Bem-vindo(a) à Calculadora em Python CLI!
+======================================================
+        CALCULADORA CIENTÍFICA EM PYTHON CLI        
+======================================================
+  --- Aritmética Básica ---
+   1. Adição (+)           2. Subtração (-)
+   3. Multiplicação (*)     4. Divisão (/)
+   5. Resto da Divisão (%)  6. Módulo (|x|)
+  --- Potências & Raízes ---
+   7. Potência (x^y)        8. Quadrado (x²)
+   9. Cubo (x³)            10. Raiz Quadrada (√x)
+  11. Raiz Cúbica (∛x)      12. Raiz N-ésima (ⁿ√x)
+  13. Base 10 (10^x)       14. Base Euler (e^x)
+  --- Logaritmos ---
+  15. Logaritmo Base 10    16. Logaritmo Natural (ln)
+  17. Logaritmo Base 2
+  --- Trigonometria (Graus ou Radianos) ---
+  18. Seno (sin)           19. Cosseno (cos)
+  20. Tangente (tan)       21. Arco Seno (asin)
+  22. Arco Cosseno (acos)  23. Arco Tangente (atan)
+  --- Funções Especiais ---
+  24. Fatorial (n!)        25. Inverso (1/x)
+  26. Porcentagem (%)      27. Constantes (π, e, φ)
+   0. Sair
+======================================================
 
-==========================================
-        CALCULADORA EM PYTHON CLI        
-==========================================
-  1. Adição (+)
-  2. Subtração (-)
-  3. Multiplicação (*)
-  4. Divisão (/)
-  0. Sair
-==========================================
-Selecione uma opção (0 a 4): 1
+Selecione uma opção (0 a 27): 18
+Unidade angular: [1] Graus (DEG) | [2] Radianos (RAD) [padrão: 1]: 1
+Digite o valor do ângulo: 30
 
---- Operação selecionada: Adição (+) ---
-Digite o primeiro número: 10
-Digite o segundo número: 5
-------------------------------------------
-Resultado: 10 + 5 = 15
-------------------------------------------
+------------------------------------------------------
+Resultado: sin(30°) = 0.5
+------------------------------------------------------
+Último Resultado (ANS): 0.5
 ```
 
-### 4.2. Executar os Testes Automatizados
+### 3.2. Executar os Testes Automatizados (unittest)
 
-Para executar todos os testes unitários utilizando o runner nativo do `unittest`:
+Para rodar todos os **38 testes unitários** formalmente:
 
 ```bash
-python -m unittest
+python3 -m unittest -v
 ```
 
-Para uma saída detalhada com a listagem de cada caso de teste:
-
-```bash
-python -m unittest -v
-```
-
-Exemplo de saída esperada dos testes:
-
+Saída esperada:
 ```text
-test_adicao_com_zero (test_operations.TestOperacoesMatematicas) ... ok
-test_adicao_decimais (test_operations.TestOperacoesMatematicas) ... ok
-test_adicao_negativos (test_operations.TestOperacoesMatematicas) ... ok
-test_adicao_positivos (test_operations.TestOperacoesMatematicas) ... ok
-test_divisao_decimal (test_operations.TestOperacoesMatematicas) ... ok
-test_divisao_dividendo_zero (test_operations.TestOperacoesMatematicas) ... ok
-test_divisao_exata (test_operations.TestOperacoesMatematicas) ... ok
-test_divisao_negativos (test_operations.TestOperacoesMatematicas) ... ok
-test_divisao_por_zero_lanca_excecao (test_operations.TestOperacoesMatematicas) ... ok
-test_multiplicacao_decimais (test_operations.TestOperacoesMatematicas) ... ok
-test_multiplicacao_negativos (test_operations.TestOperacoesMatematicas) ... ok
-test_multiplicacao_por_zero (test_operations.TestOperacoesMatematicas) ... ok
-test_multiplicacao_positivos (test_operations.TestOperacoesMatematicas) ... ok
-test_subtracao_com_zero (test_operations.TestOperacoesMatematicas) ... ok
-test_subtracao_decimais (test_operations.TestOperacoesMatematicas) ... ok
-test_subtracao_negativos (test_operations.TestOperacoesMatematicas) ... ok
-test_subtracao_positivos (test_operations.TestOperacoesMatematicas) ... ok
-
-----------------------------------------------------------------------
-Ran 17 tests in 0.002s
+Ran 38 tests in 0.003s
 
 OK
 ```
 
 ---
 
-## 5. Tabela de Conformidade com Requisitos
+## 4. Cobertura de Testes Unitários
 
-| Requisito | Descrição | Status | Onde está implementado |
-|---|---|:---:|---|
-| **RF01** | Receber dois números | Concluído | `main.py` (`ler_numero`) |
-| **RF02** | Selecionar adição, subtração, multiplicação ou divisão | Concluído | `main.py` (`exibir_menu` & `OPERACOES`) |
-| **RF03** | Executar a operação e exibir o resultado | Concluído | `operations.py` e `main.py` |
-| **RF04** | Validar entradas numéricas inválidas | Concluído | `main.py` (`ler_numero` com repetição) |
-| **RF05** | Impedir divisão por zero com mensagem clara | Concluído | `operations.py` (`ZeroDivisionError`) e `main.py` |
-| **RF06** | Permitir cálculos consecutivos | Concluído | `main.py` (loop contínuo) |
-| **RF07** | Permitir encerrar a aplicação pelo menu | Concluído | Opção `0` no menu do `main.py` |
-| **RT01** | Utilizar Python 3.10+ | Concluído | Tipagem estática e sintaxe moderna |
-| **RT02** | Interface de linha de comando (CLI) | Concluído | Entrada e saída via terminal com menus textuais |
-| **RT03** | Bibliotecas nativas sem dependências externas | Concluído | Apenas `sys` e `unittest` |
-| **RT04** | Operação em função independente | Concluído | `operations.py` |
-| **RT05** | Utilizar `float` para inteiros e decimais | Concluído | Assinaturas com tipos `float` em `operations.py` |
-| **RT06** | Tratar exceções e entradas inválidas | Concluído | `try/except` para `ValueError` e `ZeroDivisionError` |
-| **RT07** | Seguir convenções PEP 8 | Concluído | Nomenclatura, docstrings e espaçamento padronizados |
-| **RT08** | Não utilizar `eval()` | Concluído | Operadores matemáticos explícitos (+, -, *, /) |
-| **RT09** | Testes automatizados com `unittest` | Concluído | `test_operations.py` |
-| **RT10** | Documentação no `README.md` | Concluído | Este documento |
+A suíte em `test_operations.py` cobre 100% dos cenários críticos:
+
+| Categoria | Testes Inclusos | Casos de Borda Testados |
+| :--- | :--- | :--- |
+| **Aritmética Básica** | `test_adicao_*`, `test_subtracao_*`, `test_multiplicacao_*`, `test_divisao_*`, `test_resto_divisao` | Negativos, decimais, zeros, divisão por zero (`ZeroDivisionError`) |
+| **Potências & Raízes** | `test_potenciacao_*`, `test_quadrado_e_cubo`, `test_raiz_quadrada`, `test_raiz_cubica`, `test_raiz_enesiema`, `test_exponenciais_*` | Raiz de negativos, base zero com expoente negativo, potências fracionárias |
+| **Logaritmos** | `test_logaritmo_base_10`, `test_logaritmo_natural`, `test_logaritmo_base_2` | Bloqueio de valores $\le 0$ com `ValueError` |
+| **Trigonometria** | `test_trigonometria_radianos`, `test_trigonometria_graus`, `test_tangente_descontinuidade`, `test_trigonometria_inversas`, `test_hiperbolicas` | Graus e Radianos, assíntota de $\tan(90^\circ)$, domínio de $\arcsin$ fora de $[-1, 1]$ |
+| **Funções Especiais & Constantes** | `test_fatorial`, `test_inverso`, `test_modulo`, `test_porcentagem`, `test_constantes_matematicas` | $0! = 1$, números negativos/decimais no fatorial, $1/0$, precisão de $\pi, e, \phi, \tau$ |
 
 ---
 
-## 6. Critérios de Aceitação Validados
+## 5. Requisitos e Critérios Atendidos
 
-1. **Adição**: `10 + 5 = 15`
-2. **Subtração**: `10 - 5 = 5`
-3. **Multiplicação**: `10 * 5 = 50`
-4. **Divisão**: `10 / 5 = 2`
-5. **Decimais e Negativos**: Operações como `-4.5 + 6.5 = 2`, `2.5 * 4 = 10`, `7 / 2 = 3.5` e `-10 - 5 = -15` suportadas e validadas.
-6. **Divisão por zero**: Bloqueada preventivamente na CLI e com lançamento de erro protegido na biblioteca de operações.
-7. **Resiliência a falhas**: Letras, caracteres especiais e formatos inválidos não quebram o programa, solicitando nova tentativa imediatamente.
+### Requisitos Funcionais Científicos (RFC)
+- **RFC01**: Potenciação arbitrária ($x^y$), potências dedicadas ($x^2, x^3$) e exponenciais ($10^x, e^x$).
+- **RFC02**: Radiciação quadrada ($\sqrt{x}$), cúbica ($\sqrt[3]{x}$) e raiz $n$-ésima ($\sqrt[y]{x}$).
+- **RFC03**: Logaritmos na base 10 ($\log_{10}$), natural ($\ln$) e base 2 ($\log_2$).
+- **RFC04**: Funções trigonométricas diretas e inversas com alternador DEG / RAD.
+- **RFC05**: Funções hiperbólicas ($\sinh, \cosh, \tanh$).
+- **RFC06**: Funções combinatórias e especiais: fatorial ($n!$), inverso ($1/x$), módulo ($|x|$) e porcentagem ($\%$).
+- **RFC07**: Constantes científicas integradas ($\pi, e, \phi, \tau$).
+- **RFC08**: Sistema de memória científica com operações $MC, MR, M+, M-$.
+
+### Requisitos Técnicos e UX/UI (RTC)
+- **RTC01**: Zero dependências de terceiros no núcleo matemático Python (apenas módulo nativo `math`).
+- **RTC02**: Compatibilidade integral com terminal CLI interativo e aplicação web.
+- **RTC03**: Tratamento defensivo de exceções matemáticas (`ZeroDivisionError`, `ValueError`, `OverflowError`).
+- **RTC04**: Design responsivo com paleta Slate e acentos Indigo/Emerald, com suporte tátil e teclado físico.
